@@ -1,7 +1,123 @@
 @import "tailwindcss";
 
+:root {
+  --void: #04050c;
+  --cyan: #22d3ee;
+  --violet: #a855f7;
+  --magenta: #ec4899;
+  --valid: #34d399;
+  --revoked: #fb7185;
+}
+
+html, body { height: 100%; }
+
 body {
-  background: #0d0a14;
-  color: #ede6f7;
-  font-family: system-ui, sans-serif;
+  background: var(--void);
+  color: #eef1fb;
+  font-family: var(--font-doc), Georgia, serif;
+  overflow-x: hidden;
+}
+
+.font-mrz { font-family: var(--font-mrz), ui-monospace, monospace; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ── iridescent aurora field: the page is made of the same material as the card ── */
+.aurora {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(760px 620px at 14% 8%,  rgba(34, 211, 238, 0.20), transparent 62%),
+    radial-gradient(820px 700px at 82% 22%, rgba(168, 85, 247, 0.22), transparent 64%),
+    radial-gradient(680px 560px at 62% 92%, rgba(236, 72, 153, 0.16), transparent 62%),
+    radial-gradient(900px 700px at 30% 78%, rgba(34, 211, 238, 0.10), transparent 66%);
+  filter: blur(8px);
+}
+/* fine grain so the gradients never band */
+.aurora::after {
+  content: "";
+  position: absolute; inset: -40%;
+  opacity: 0.30;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ── frosted glass surfaces ───────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+/* iridescent hairline along the top edge */
+.glass-edge {
+  position: relative;
+}
+.glass-edge::before {
+  content: "";
+  position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), var(--magenta), transparent);
+  opacity: 0.75;
+}
+
+/* ── guilloché, kept but tinted iridescent instead of gold ────────────── */
+.guilloche {
+  background-color: rgba(10, 12, 30, 0.55);
+  background-image:
+    repeating-radial-gradient(circle at 22% 18%, transparent 0 13px, rgba(34,211,238,0.055) 13px 14px),
+    repeating-radial-gradient(circle at 78% 82%, transparent 0 17px, rgba(236,72,153,0.045) 17px 18px),
+    repeating-linear-gradient(58deg, transparent 0 9px, rgba(168,85,247,0.04) 9px 10px);
+}
+
+/* ── holographic sweep across the credential ──────────────────────────── */
+@keyframes holo-sweep {
+  0%   { transform: translateX(-120%) rotate(18deg); }
+  100% { transform: translateX(240%)  rotate(18deg); }
+}
+.holo::after {
+  content: "";
+  position: absolute; top: -60%; left: 0;
+  width: 46%; height: 220%;
+  background: linear-gradient(90deg,
+    transparent, rgba(34,211,238,0.16), rgba(168,85,247,0.26), rgba(236,72,153,0.16), transparent);
+  animation: holo-sweep 6.5s ease-in-out infinite;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* iridescent text + borders */
+.iri-text {
+  background: linear-gradient(94deg, var(--cyan), var(--violet) 45%, var(--magenta));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.iri-fill {
+  background: linear-gradient(94deg, var(--cyan), var(--violet) 55%, var(--magenta));
+  color: #06070f;
+}
+.iri-ring { border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(8,10,22,0.85), rgba(8,10,22,0.85)) padding-box,
+    linear-gradient(94deg, var(--cyan), var(--violet), var(--magenta)) border-box;
+}
+
+/* ── seal ─────────────────────────────────────────────────────────────── */
+.seal {
+  border: 2px solid rgba(168, 85, 247, 0.75);
+  box-shadow: 0 0 0 1px rgba(34,211,238,0.30) inset, 0 0 26px rgba(168,85,247,0.35);
+}
+@keyframes seal-in {
+  from { transform: rotate(-26deg) scale(1.55); opacity: 0; }
+  to   { transform: rotate(-11deg) scale(1);    opacity: 1; }
+}
+.seal-stamp { animation: seal-in .55s cubic-bezier(.2,1.4,.4,1) both; }
+
+/* ── MRZ ──────────────────────────────────────────────────────────────── */
+.mrz {
+  background: rgba(0, 0, 0, 0.30);
+  border-top: 1px solid rgba(168, 85, 247, 0.25);
+  letter-spacing: 0.14em;
+}
+
+@keyframes pulse-led { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.led { animation: pulse-led 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .holo::after, .seal-stamp, .led { animation: none; }
 }
